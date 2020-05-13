@@ -1,6 +1,7 @@
 package src.main.java;
 
-import org.jdom2.CDATA;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import org.jsoup.Jsoup;
@@ -9,11 +10,12 @@ import org.jsoup.nodes.Element;
 
 
 import java.io.*;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class Main {
     public static void main(String[] args) {
@@ -34,6 +36,7 @@ public class Main {
                 data += "\n";
                 line = bufferedReader.readLine();
             }
+            finder.Println(data);
             doc = Jsoup.parse(data);
         } catch (IOException e) {
             e.printStackTrace();
@@ -45,6 +48,7 @@ public class Main {
         content.remove(0);
         List<Element> linkRaw = finder.GetElementByClass(doc, "more-link");
         linkRaw.remove(0);
+        //String magnet = GetMagnet(finder, doc);
         List<Element> img = new ArrayList<Element>();
         List<String> linkArr = new ArrayList<String>();
         for (Element e :
@@ -64,32 +68,17 @@ public class Main {
         }
         // Xml写入
         try {
-            //1.生成一个根节点
-            org.jdom2.Element rss = new org.jdom2.Element("rss");
-            //2.为节点添加属性
-            rss.setAttribute("version", "2.0");
-            //3.生成一个document的对象
-            org.jdom2.Document document = new org.jdom2.Document(rss);
-            org.jdom2.Element channel = new org.jdom2.Element("channel");
-            rss.addContent(channel);
-            org.jdom2.Element title = new org.jdom2.Element("title");
-            title.setText("My own rss feed");
-            channel.addContent(title);
-            org.jdom2.Element link = new org.jdom2.Element("link");
-            link.setText("https://hacg.me");
-            channel.addContent(link);
-            org.jdom2.Element description = new org.jdom2.Element("description");
-            description.setText("琉璃神社Rss");
-            channel.addContent(description);
-            org.jdom2.Element lastBuildDate = new org.jdom2.Element("lastBuildDate");
-            lastBuildDate.setText(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
-            channel.addContent(lastBuildDate);
-            org.jdom2.Element language = new org.jdom2.Element("language");
-            language.setText("zh-cn");
-            channel.addContent(language);
+            SetupXML();
+            SAXBuilder sb = new SAXBuilder();
+            org.jdom2.Document document = sb.build("rss.xml");;
+            org.jdom2.Element root = document.getRootElement();
+            org.jdom2.Element channel = root.getChild("channel");
             for (int i = 0; i < titleRaw.size(); i++) {
+                if(CheckTitle(channel, titleRaw.get(i).text())){
+                    continue;
+                }
                 org.jdom2.Element item = new org.jdom2.Element("item");
-                document.addContent(item);
+                channel.addContent(item);
                 org.jdom2.Element titleL = new org.jdom2.Element("title");
                 titleL.setText(titleRaw.get(i).text());
                 item.addContent(titleL);
@@ -102,7 +91,10 @@ public class Main {
                 org.jdom2.Element author = new org.jdom2.Element("author");
                 author.setText("琉璃神社");
                 item.addContent(author);
-                
+                org.jdom2.Element pubDate = new org.jdom2.Element("pubDate");
+                pubDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                item.addContent(pubDate);
+                finder.Println("loop:" + i);
             }
             //设置生成xml的格式
             Format format = Format.getCompactFormat();
@@ -112,12 +104,80 @@ public class Main {
             //4.创建XMLOutputter的对象
             XMLOutputter outputter = new XMLOutputter(format);
             //5.利用outputter将document对象转换成xml文档
-            outputter.output(document, new FileOutputStream(new File("rssnews.xml")));
+            outputter.output(document, new FileOutputStream("rss.xml"));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (JDOMException e) {
+            e.printStackTrace();
         }
 
+    }
+
+    private static String GetMagnet(DataFinder finder, Document doc) {
+        List<Element> list = finder.GetElementByClass(doc, "entry-content");
+        String magent;
+        for (Element e:
+             list) {
+            String content = e.text();
+            Pattern pattern = Pattern.compile("([a-z][A-Z][0-9])");
+        }
+        return "";
+    }
+
+    private static boolean CheckTitle(org.jdom2.Element channel, String text) {
+        List<org.jdom2.Element> list = channel.getChildren("item");
+        System.out.println("count:"+list.size());
+        for (org.jdom2.Element e:
+             list) {
+            String title = e.getChild("title").getText();
+            System.out.println("title:"+title);
+            if(title.equals(text)){
+                System.out.println(title+" is equals "+text);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static void SetupXML() throws IOException {
+        File file = new File("rss.xml");
+        if(file.exists()){
+            return;
+        }
+        //1.生成一个根节点
+        org.jdom2.Element rss = new org.jdom2.Element("rss");
+        //2.为节点添加属性
+        rss.setAttribute("version", "2.0");
+        //3.生成一个document的对象
+        org.jdom2.Document document = new org.jdom2.Document(rss);
+        org.jdom2.Element channel = new org.jdom2.Element("channel");
+        rss.addContent(channel);
+        org.jdom2.Element title = new org.jdom2.Element("title");
+        title.setText("琉璃神社");
+        channel.addContent(title);
+        org.jdom2.Element link = new org.jdom2.Element("link");
+        link.setText("https://hacg.me");
+        channel.addContent(link);
+        org.jdom2.Element description = new org.jdom2.Element("description");
+        description.setText("琉璃神社Rss");
+        channel.addContent(description);
+        org.jdom2.Element lastBuildDate = new org.jdom2.Element("lastBuildDate");
+        lastBuildDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+        channel.addContent(lastBuildDate);
+        org.jdom2.Element language = new org.jdom2.Element("language");
+        language.setText("zh-cn");
+        channel.addContent(language);
+
+        //设置生成xml的格式
+        Format format = Format.getCompactFormat();
+        format.setIndent("");
+        //生成不一样的编码
+        format.setEncoding("UTF-8");
+        //4.创建XMLOutputter的对象
+        XMLOutputter outputter = new XMLOutputter(format);
+        //5.利用outputter将document对象转换成xml文档
+        outputter.output(document, new FileOutputStream(new File("rss.xml")));
     }
 }
