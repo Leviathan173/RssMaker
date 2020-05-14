@@ -1,6 +1,3 @@
-package src.main.java;
-
-import com.sun.org.apache.xpath.internal.XPathAPI;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -9,12 +6,9 @@ import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.w3c.dom.NodeList;
 
-import javax.xml.transform.TransformerException;
 import java.io.IOException;
 import java.util.List;
 
