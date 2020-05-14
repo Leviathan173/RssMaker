@@ -1,5 +1,3 @@
-package src.main.java;
-
 public class Print {
     public void Println(Object T){
         System.out.println(T);

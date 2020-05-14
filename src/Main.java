@@ -1,5 +1,3 @@
-package src.main.java;
-
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
