@@ -1,3 +1,4 @@
+
 import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
@@ -14,27 +15,21 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Main {
-    public static void main(String[] args) throws InterruptedException {
+public class Main extends Print{
+
+    public static void main(String[] args) throws Exception {
         while (true){
             DataFinder finder = new DataFinder();
             Document doc = null;
             try {
                 String data = finder.Requester("https://hacg.me/wp/");
-//                File file = new File("data");
-//                if (!file.exists()) {
-//                    file.createNewFile();
-//                }
-//                FileReader reader = new FileReader(file);
-//                BufferedReader bufferedReader = new BufferedReader(reader);
-//                StringBuilder data = new StringBuilder();
-//                String line = bufferedReader.readLine();
-//                while (line != null) {
-//                    data.append(line);
-//                    data.append("\n");
-//                    line = bufferedReader.readLine();
-//                }
-//                finder.Println(data.toString());
+                if(data == null){
+                    for(int i = 0;i<60*60;i++){
+                        Println(i+"/"+(60*60*8));
+                        Thread.sleep(1000);
+                    }
+                    continue;
+                }
                 doc = Jsoup.parse(data);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -53,9 +48,9 @@ public class Main {
                     content) {
                 Element element = e.getElementsByTag("img").get(0);
                 if (element == null) {
-                    finder.PrintErr("element is null");
+                    PrintErr("element is null");
                 } else {
-                    finder.Println(element.attr("src"));
+                    Println(element.attr("src"));
                     img.add(element);
                 }
             }
@@ -85,7 +80,7 @@ public class Main {
                     linkL.setText(linkArr.get(i));
                     item.addContent(linkL);
                     org.jdom2.Element descriptionL = new org.jdom2.Element("description");
-                    descriptionL.setText(content.get(i).text() + "\n<br>" + magnet + "<p><img src=\""+img.get(i).attr("src")+"\"/></p>");
+                    descriptionL.setText(content.get(i).text() + "\n<br>" + magnet + "<p><img src=\""+img.get(i).attr("src")+"\" /></p>");
                     item.addContent(descriptionL);
                     org.jdom2.Element author = new org.jdom2.Element("author");
                     author.setText("琉璃神社");
@@ -93,8 +88,11 @@ public class Main {
                     org.jdom2.Element pubDate = new org.jdom2.Element("pubDate");
                     pubDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                     item.addContent(pubDate);
-                    finder.Println("loop:" + i);
+                    Println("loop:" + i);
                 }
+		org.jdom2.Element lastBuildDate = channel.getChild("lastBuildDate");
+                assert  lastBuildDate != null;
+                lastBuildDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 //设置生成xml的格式
                 Format format = Format.getCompactFormat();
                 format.setIndent("");
@@ -112,7 +110,7 @@ public class Main {
                 e.printStackTrace();
             }
             for(int i = 0;i<60*60*8;i++){
-                finder.Println(i+"/"+(60*60*8));
+                Println(i+"/"+(60*60*8));
                 Thread.sleep(1000);
             }
 
@@ -129,7 +127,7 @@ public class Main {
             Pattern pattern = Pattern.compile("[a-zA-Z0-9]{40,}");
             Matcher matcher = pattern.matcher(content);
             if (matcher.find()) {
-                finder.Println(matcher.group(0));
+                Println(matcher.group(0));
                 magent += matcher.group(0);
             }
         }

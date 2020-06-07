@@ -10,11 +10,13 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class DataFinder extends Print {
 
-    public String Requester(String url) throws IOException {
+    public String Requester(String url) throws Exception {
         String data = null;
         //http请求块
         HttpGet httpget = new HttpGet(url);
@@ -27,6 +29,17 @@ public class DataFinder extends Print {
         int state = res.getStatusLine().getStatusCode();
         if(state!=200) {
             System.err.println("连接失败，错误码："+state);
+            MailSender mailSender = new MailSender();
+            String subject = "Rss服务器错误";
+            String content = "<h1>错误信息</h1><br><div>" +
+                    "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
+                    "错误类型：连接失败<br>" +
+                    "请求网址："+url+"<br>" +
+                    "请求错误代码："+state+"<br>" +
+                    "详细请求头："+res.getAllHeaders().toString() +
+                    "</div>";
+            mailSender.SendMail(subject, content);
+            return null;
         }else {
             Println("获取成功...");
             HttpEntity entity = res.getEntity();
@@ -37,6 +50,14 @@ public class DataFinder extends Print {
         httpClient.close();
         if(data == null){
             PrintErr("Bad Data!!!");
+            MailSender mailSender = new MailSender();
+            String subject = "Rss服务器错误";
+            String content = "<h1>错误信息</h1><br><div>" +
+                    "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
+                    "错误类型：解析网页数据失败" +
+                    "请求网址："+url+"<br>" +
+                    "原始网页数据：<br>"+data.toString()+"</div>";
+            mailSender.SendMail(subject, content);
             return null;
         }else {
             return data;
