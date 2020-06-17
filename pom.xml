@@ -15,7 +15,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>src.main.java.Main</mainClass>
+                            <mainClass>Main</mainClass>
                             <!--根据自己类名和路径修改-->
                         </manifest>
                         <manifestEntries>
