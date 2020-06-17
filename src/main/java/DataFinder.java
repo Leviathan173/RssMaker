@@ -39,6 +39,8 @@ public class DataFinder extends Print {
                     "详细请求头："+res.getAllHeaders().toString() +
                     "</div>";
             mailSender.SendMail(subject, content);
+            res.close();
+            httpClient.close();
             return null;
         }else {
             Println("获取成功...");
@@ -55,8 +57,7 @@ public class DataFinder extends Print {
             String content = "<h1>错误信息</h1><br><div>" +
                     "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
                     "错误类型：解析网页数据失败" +
-                    "请求网址："+url+"<br>" +
-                    "原始网页数据：<br>"+data.toString()+"</div>";
+                    "请求网址："+url+"<br>";
             mailSender.SendMail(subject, content);
             return null;
         }else {
