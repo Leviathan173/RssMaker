@@ -126,9 +126,12 @@ public class Main extends Print{
             String content = e.text();
             Pattern pattern = Pattern.compile("[a-zA-Z0-9]{40,}");
             Matcher matcher = pattern.matcher(content);
-            if (matcher.find()) {
-                Println(matcher.group(0));
-                magent += matcher.group(0);
+            while (matcher.find()) {
+                for (int i = 0; i < matcher.groupCount(); i++) {
+                    Print.Println(matcher.group(i));
+                    magent += matcher.group(i);
+                    magent += "\n";
+                }
             }
         }
         return magent;
