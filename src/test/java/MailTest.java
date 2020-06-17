@@ -21,10 +21,10 @@ public class MailTest {
     }
     boolean send(String subject, String content){
         try {
-            String myEmailAccount = "Lolitadaisukidesu@163.com";
-            String myEmailPassword = "FZZQQZEUMNQLIEKW";
+            String myEmailAccount = "xxxxxxxxxx@163.com";
+            String myEmailPassword = "xxxxxxxxxxxx";
             String myEmailSMTPHost = "smtp.163.com";
-            String receiveMailAccount = "506535370@qq.com";
+            String receiveMailAccount = "xxxxxxxxxxxx@qq.com";
 
             Properties props = new Properties();
             props.setProperty("mail.transport.protocol", "smtp");
