@@ -19,6 +19,7 @@ public class Main extends Print{
 
     public static void main(String[] args) throws Exception {
         while (true){
+            List<Article> articleList = new ArrayList<Article>();
             DataFinder finder = new DataFinder();
             Document doc = null;
             try {
@@ -36,28 +37,17 @@ public class Main extends Print{
             }
             // 数据处理
             assert doc != null;
-            List<Element> titleRaw = finder.GetElementByClass(doc, "entry-title");
-            titleRaw.remove(0);
-            List<Element> content = finder.GetElementByClass(doc, "entry-content");
-            content.remove(0);
-            List<Element> linkRaw = finder.GetElementByClass(doc, "more-link");
-            linkRaw.remove(0);
-            List<Element> img = new ArrayList<Element>();
-            List<String> linkArr = new ArrayList<String>();
-            for (Element e :
-                    content) {
-                Element element = e.getElementsByTag("img").get(0);
-                if (element == null) {
-                    PrintErr("element is null");
-                } else {
-                    Println(element.attr("src"));
-                    img.add(element);
-                }
-            }
-            for (Element e :
-                    linkRaw) {
-                String href = e.attr("href");
-                linkArr.add(href);
+            List<Element> articles = finder.GetElementsByTagName(doc,"article");
+            for (Element e:
+                 articles) {
+                String title,content,imgLink,articleLink,magnet = "";
+                title = e.getElementsByClass("entry-title").text();
+                content = e.getElementsByClass("entry-content").text();
+                imgLink = e.getElementsByTag("img").get(0).attr("src");
+                articleLink = e.getElementsByClass("more-link").attr("href");
+                if(!articleLink.equals(""))
+                    magnet = GetMagnet(finder, Jsoup.parse(finder.Requester(articleLink)));
+                articleList.add(new Article(title, content, imgLink, articleLink, magnet));
             }
             // Xml写入
             try {
@@ -66,21 +56,22 @@ public class Main extends Print{
                 org.jdom2.Document document = sb.build("rss.xml");
                 org.jdom2.Element root = document.getRootElement();
                 org.jdom2.Element channel = root.getChild("channel");
-                for (int i = 0; i < titleRaw.size(); i++) {
-                    if (CheckTitle(channel, titleRaw.get(i).text())) {
+                for (Article a:
+                     articleList) {
+                    if (CheckTitle(channel, a.getTitle())) {
                         continue;
                     }
-                    String magnet = GetMagnet(finder, Jsoup.parse(finder.Requester(linkArr.get(i))));
+
                     org.jdom2.Element item = new org.jdom2.Element("item");
                     channel.addContent(item);
                     org.jdom2.Element titleL = new org.jdom2.Element("title");
-                    titleL.setText(titleRaw.get(i).text());
+                    titleL.setText(a.getTitle());
                     item.addContent(titleL);
                     org.jdom2.Element linkL = new org.jdom2.Element("link");
-                    linkL.setText(linkArr.get(i));
+                    linkL.setText(a.getLink());
                     item.addContent(linkL);
                     org.jdom2.Element descriptionL = new org.jdom2.Element("description");
-                    descriptionL.setText(content.get(i).text() + "\n<br>" + magnet + "<p><img src=\""+img.get(i).attr("src")+"\" /></p>");
+                    descriptionL.setText(a.getContent() + "\n<br>" + a.getMagnet() + "<p><img src=\""+a.getImgLink()+"\" /></p>");
                     item.addContent(descriptionL);
                     org.jdom2.Element author = new org.jdom2.Element("author");
                     author.setText("琉璃神社");
@@ -88,9 +79,8 @@ public class Main extends Print{
                     org.jdom2.Element pubDate = new org.jdom2.Element("pubDate");
                     pubDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                     item.addContent(pubDate);
-                    Println("loop:" + i);
                 }
-		org.jdom2.Element lastBuildDate = channel.getChild("lastBuildDate");
+		        org.jdom2.Element lastBuildDate = channel.getChild("lastBuildDate");
                 assert  lastBuildDate != null;
                 lastBuildDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
                 //设置生成xml的格式
