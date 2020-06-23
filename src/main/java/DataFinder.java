@@ -68,10 +68,6 @@ public class DataFinder extends Print {
 
     public List<Element> GetElementByClass(Document doc, String className) {
         List<Element> list = doc.getElementsByClass(className);
-        for (Element e:
-             list) {
-            Println(className+":"+e.text());
-        }
         if(list != null){
             return list;
         }else {
@@ -80,4 +76,17 @@ public class DataFinder extends Print {
         }
     }
 
+    public List<Element> GetElementsByTagName(Document doc, String article) {
+        List<Element> list = doc.getElementsByTag(article);
+        for (Element e:
+             list) {
+            Println("文章："+e.text());
+        }
+        if(list != null){
+            return list;
+        }else {
+            PrintErr("List of Article is null!!!");
+            return null;
+        }
+    }
 }
