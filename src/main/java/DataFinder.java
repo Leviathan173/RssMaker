@@ -24,7 +24,7 @@ public class DataFinder extends Print {
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpClientContext context = HttpClientContext.create();
         CloseableHttpResponse res;
-        Println("开始获取网页数据...");
+        Println("开始获取"+url+"的网页数据");
         res = httpClient.execute(httpget,context);
         int state = res.getStatusLine().getStatusCode();
         if(state!=200) {
@@ -78,10 +78,6 @@ public class DataFinder extends Print {
 
     public List<Element> GetElementsByTagName(Document doc, String article) {
         List<Element> list = doc.getElementsByTag(article);
-        for (Element e:
-             list) {
-            Println("文章："+e.text());
-        }
         if(list != null){
             return list;
         }else {
