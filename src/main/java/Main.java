@@ -65,7 +65,10 @@ public class Main extends Print{
                     if (CheckTitle(channel, a.getTitle())) {
                         continue;
                     }
-
+                    if(a.getTitle().equals("") || a.getTitle().equals(null)){
+                        Println("广告文章，跳过...");
+                        continue;
+                    }
                     org.jdom2.Element item = new org.jdom2.Element("item");
                     channel.addContent(item);
                     org.jdom2.Element titleL = new org.jdom2.Element("title");
