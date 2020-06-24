@@ -9,7 +9,6 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +20,7 @@ public class DataFinder extends Print {
         //http请求块
         HttpGet httpget = new HttpGet(url);
         httpget.setConfig(RequestConfig.custom().setSocketTimeout(30000).setConnectTimeout(30000).build());
+        httpget.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.6)");
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpClientContext context = HttpClientContext.create();
         CloseableHttpResponse res;
@@ -50,7 +50,7 @@ public class DataFinder extends Print {
 
         res.close();
         httpClient.close();
-        if(data == null){
+        if(data == null || data.equals("")){
             PrintErr("Bad Data!!!");
             MailSender mailSender = new MailSender();
             String subject = "Rss服务器错误";
