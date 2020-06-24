@@ -45,7 +45,7 @@ public class Main extends Print{
                 content = e.getElementsByClass("entry-content").text();
                 imgLink = e.getElementsByTag("img").get(0).attr("src");
                 articleLink = e.getElementsByClass("more-link").attr("href");
-                if(!articleLink.equals("") || !articleLink.equals(null)){
+                if(!articleLink.equals("") && !articleLink.equals(null)){
                     magnet = GetMagnet(finder, Jsoup.parse(finder.Requester(articleLink)));
                 }
                 else{
