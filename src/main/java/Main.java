@@ -45,8 +45,12 @@ public class Main extends Print{
                 content = e.getElementsByClass("entry-content").text();
                 imgLink = e.getElementsByTag("img").get(0).attr("src");
                 articleLink = e.getElementsByClass("more-link").attr("href");
-                if(!articleLink.equals(""))
+                if(!articleLink.equals("") || !articleLink.equals(null)){
                     magnet = GetMagnet(finder, Jsoup.parse(finder.Requester(articleLink)));
+                }
+                else{
+                    Println("has no magnet in " + articleLink);
+                }
                 articleList.add(new Article(title, content, imgLink, articleLink, magnet));
             }
             // Xml写入
@@ -113,14 +117,13 @@ public class Main extends Print{
         String magent = "";
         for (Element e :
                 list) {
-            String content = e.text();
+            String content = e.toString();
             Pattern pattern = Pattern.compile("[a-zA-Z0-9]{40,}");
             Matcher matcher = pattern.matcher(content);
             while (matcher.find()) {
-                for (int i = 0; i < matcher.groupCount(); i++) {
-                    Print.Println(matcher.group(i));
-                    magent += matcher.group(i);
-                    magent += "\n";
+                for (int i = 0; i <= matcher.groupCount(); i++) {
+                    magent = magent + matcher.group(i);
+                    magent = magent + "\n";
                 }
             }
         }
