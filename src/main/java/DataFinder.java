@@ -9,6 +9,7 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,42 +24,49 @@ public class DataFinder extends Print {
         httpget.addHeader("User-Agent", "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.7.6)");
         CloseableHttpClient httpClient = HttpClientBuilder.create().build();
         HttpClientContext context = HttpClientContext.create();
-        CloseableHttpResponse res;
+        CloseableHttpResponse res = null;
         Println("开始获取"+url+"的网页数据");
-        res = httpClient.execute(httpget,context);
-        int state = res.getStatusLine().getStatusCode();
-        if(state!=200) {
-            System.err.println("连接失败，错误码："+state);
-            MailSender mailSender = new MailSender();
-            String subject = "Rss服务器错误";
-            String content = "<h1>错误信息</h1><br><div>" +
-                    "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
-                    "错误类型：连接失败<br>" +
-                    "请求网址："+url+"<br>" +
-                    "请求错误代码："+state+"<br>" +
-                    "详细请求头："+res.getAllHeaders().toString() +
-                    "</div>";
-            mailSender.SendMail(subject, content);
-            res.close();
-            httpClient.close();
-            return null;
-        }else {
-            Println("获取成功...");
-            HttpEntity entity = res.getEntity();
-            data = EntityUtils.toString(entity,"UTF-8");
+        try {
+            res = httpClient.execute(httpget,context);
+            int state = res.getStatusLine().getStatusCode();
+            if(state!=200) {
+                SendErrMail("Rss服务器错误", "<h1>错误信息</h1><br><div>" +
+                        "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
+                        "错误类型：连接失败<br>" +
+                        "请求网址："+url+"<br>" +
+                        "请求错误代码："+state+"<br>" +
+                        "详细请求头："+res.getAllHeaders().toString() +
+                        "</div>", res, httpClient);
+                System.err.println("连接失败，错误码："+state);
+                return null;
+            }else {
+                Println("获取成功...");
+                HttpEntity entity = res.getEntity();
+                data = EntityUtils.toString(entity,"UTF-8");
+            }
+        } catch (Exception e) {
+            SendErrMail("Rss服务器错误",
+                        "<h1>错误信息</h1><br><div>" +
+                            "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
+                            "错误信息："+e.getMessage()+"<br>" +
+                            "请求网址："+url+"<br>" +
+                            "</div>" , res, httpClient);
+            e.printStackTrace();
+        } finally {
+            if(res != null)
+                res.close();
+            if(httpClient != null)
+                httpClient.close();
         }
 
-        res.close();
-        httpClient.close();
+
         if(data == null || data.equals("")){
+            SendErrMail("Rss服务器错误",
+                    "<h1>错误信息</h1><br><div>" +
+                            "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
+                            "错误类型：解析网页数据失败" +
+                            "请求网址："+url+"<br>", res, httpClient);
             PrintErr("Bad Data!!!");
-            MailSender mailSender = new MailSender();
-            String subject = "Rss服务器错误";
-            String content = "<h1>错误信息</h1><br><div>" +
-                    "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
-                    "错误类型：解析网页数据失败" +
-                    "请求网址："+url+"<br>";
-            mailSender.SendMail(subject, content);
             return null;
         }else {
             return data;
@@ -84,5 +92,18 @@ public class DataFinder extends Print {
             PrintErr("List of Article is null!!!");
             return null;
         }
+    }
+
+    public void SendErrMail(String subject, String content, CloseableHttpResponse res, CloseableHttpClient httpClient) throws Exception {
+        MailSender mailSender = new MailSender();
+        mailSender.SendMail(subject, content);
+        if(res != null)
+            res.close();
+        if(httpClient != null)
+            httpClient.close();
+    }
+    public static void SendErrMail(String subject, String content) throws Exception {
+        MailSender mailSender = new MailSender();
+        mailSender.SendMail(subject, content);
     }
 }
