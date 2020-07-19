@@ -79,6 +79,7 @@ public class Main extends Print {
                                 "文章："+articleList.toString()+"<br>");
             }
 
+            Println("");
             WaitForSecond(60 * 60 * 8);
 
         }
