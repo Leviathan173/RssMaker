@@ -79,10 +79,7 @@ public class Main extends Print {
                                 "文章："+articleList.toString()+"<br>");
             }
 
-            for (int i = 0; i < 60 * 60 * 8; i++) {
-                Println(i + "/" + (60 * 60 * 8));
-                Thread.sleep(1000);
-            }
+            WaitForSecond(60 * 60 * 8);
 
         }
 
