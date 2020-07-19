@@ -56,6 +56,10 @@ public class Main extends Print {
                     articles) {
                 String title, content, imgLink, articleLink, magnet = "";
                 title = e.getElementsByClass("entry-title").text();
+                if (title.equals("") || title.equals(null)) {
+                    Println("广告文章，跳过...");
+                    continue;
+                }
                 if (CheckTitle(channel, title)) {
                     Println("文章：" + title + " 已存在，跳过...");
                     continue;
@@ -91,10 +95,6 @@ public class Main extends Print {
             for (Article a :
                     articleList) {
                 if (CheckTitle(channel, a.getTitle())) {
-                    continue;
-                }
-                if (a.getTitle().equals("") || a.getTitle().equals(null)) {
-                    Println("广告文章，跳过...");
                     continue;
                 }
                 org.jdom2.Element item = new org.jdom2.Element("item");
