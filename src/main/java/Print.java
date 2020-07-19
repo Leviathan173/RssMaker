@@ -2,7 +2,7 @@
 public class Print {
     private static final int PROGRESS_BAR_LENGTH = 16;
     private static final String HEAD = "Waiting:"; // 或许可以删掉
-    private static int currLength = PROGRESS_BAR_LENGTH + "Waiting:0%[]".length();
+    private static int currLength = 0;
 
     public static void Println(Object T){
         System.out.println(T);
