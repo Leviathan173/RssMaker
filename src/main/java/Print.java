@@ -21,6 +21,8 @@ public class Print {
             RePrint((float)(Math.round(percentage*10000))/10000);
             try { Thread.sleep(1000); } catch (InterruptedException e) { e.printStackTrace(); }
         }
+        // 因为Main类是直接继承Print类，currLength不会重置，等待结束后需要手动重置
+        currLength = 0;
 
     }
 
