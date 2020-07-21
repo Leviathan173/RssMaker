@@ -39,10 +39,7 @@ public class Main extends Print {
             try {
                 String data = finder.Requester("https://hacg.me/wp/");
                 if (data == null) {
-                    for (int i = 0; i < 60 * 60; i++) {
-                        Println(i + "/" + (60 * 60 * 8));
-                        Thread.sleep(1000);
-                    }
+                    WaitForSecond(60 * 60);
                     continue;
                 }
                 doc = Jsoup.parse(data);
@@ -50,7 +47,10 @@ public class Main extends Print {
                 e.printStackTrace();
             }
             // 数据处理
-            assert doc != null;
+            if (doc == null) {
+                WaitForSecond(60 * 60);
+                continue;
+            }
             List<Element> articles = finder.GetElementsByTagName(doc, "article");
             for (Element e :
                     articles) {
