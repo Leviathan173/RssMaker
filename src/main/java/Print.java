@@ -13,6 +13,7 @@ public class Print {
     public static void Print(Object T){
         System.out.print(T);
     }
+    // 或许这个方法在Print类里面不是很适合
     public static void WaitForSecond(int sec){
         float percentage;
         for(float i = 1; i <= sec; i++){
@@ -23,19 +24,20 @@ public class Print {
         }
         // 因为Main类是直接继承Print类，currLength不会重置，等待结束后需要手动重置
         currLength = 0;
+        Print("\n");
 
     }
 
     private static void GotoStart(){
         for(int i = currLength; i > 0; i--){
-            Print.Print('\b');
+            Print('\b');
         }
     }
 
 
 
     static void RePrint(float percentage){
-        StringBuffer s = new StringBuffer(HEAD + percentage + "%[");
+        StringBuilder s = new StringBuilder(HEAD + percentage + "%[");
         GotoStart();
         for(int index = 0;index < PROGRESS_BAR_LENGTH;index++){
             int c = (index * 100) / PROGRESS_BAR_LENGTH;
