@@ -1,5 +1,3 @@
-
-import org.jdom2.JDOMException;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -7,7 +5,9 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Main extends Print {
+public class Main extends Printer {
 
     public static void main(String[] args) throws Exception {
         org.jdom2.Document document = null;
@@ -35,7 +35,7 @@ public class Main extends Print {
         while (true) {
             List<Article> articleList = new ArrayList<Article>();
             DataFinder finder = new DataFinder();
-            Document doc = null;
+            Document doc;
             try {
                 String data = finder.Requester("https://hacg.me/wp/");
                 if (data == null) {
@@ -45,6 +45,7 @@ public class Main extends Print {
                 doc = Jsoup.parse(data);
             } catch (IOException e) {
                 e.printStackTrace();
+                break;
             }
             // 数据处理
             if (doc == null) {
@@ -54,33 +55,36 @@ public class Main extends Print {
             List<Element> articles = finder.GetElementsByTagName(doc, "article");
             for (Element e :
                     articles) {
-                String title, content, imgLink, articleLink, magnet = "";
+                String title, publishTime, author, content, imgLink, articleLink, magnet = "";
                 title = e.getElementsByClass("entry-title").text();
-                if (title.equals("") || title.equals(null)) {
+                if (title.equals("")) {
                     Println("广告文章，跳过...");
                     continue;
                 }
+                assert channel != null;
                 if (CheckTitle(channel, title)) {
                     Println("文章：" + title + " 已存在，跳过...");
                     continue;
                 }
+                publishTime = e.getElementsByClass("entry-date").get(0).attributes().get("datetime");
+                author = e.getElementsByClass("author vcard").get(0).text();
                 content = e.getElementsByClass("entry-content").text();
                 imgLink = e.getElementsByTag("img").get(0).attr("src");
                 articleLink = e.getElementsByClass("more-link").attr("href");
-                if (!articleLink.equals("") && !articleLink.equals(null)) {
+                if (!articleLink.equals("")) {
                     magnet = GetMagnet(finder, Jsoup.parse(finder.Requester(articleLink)));
                 } else {
                     Println("has no magnet in " + articleLink);
                 }
-                articleList.add(new Article(title, content, imgLink, articleLink, magnet));
+                articleList.add(new Article(title, publishTime, author, content, imgLink, articleLink, magnet));
             }
             // Xml写入
-            if(!WriteXML(articleList, channel, document)){
+            if (!WriteXML(articleList, channel, document)) {
                 DataFinder.SendErrMail("Rss服务器写入XML文件失败",
                         "<h1>错误信息</h1><br><div>" +
                                 "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
                                 "错误类型：写入文件失败" +
-                                "文章："+articleList.toString()+"<br>");
+                                "文章：" + articleList.toString() + "<br>");
             }
 
             WaitForSecond(60 * 60 * 8);
@@ -105,13 +109,13 @@ public class Main extends Print {
                 linkL.setText(a.getLink());
                 item.addContent(linkL);
                 org.jdom2.Element descriptionL = new org.jdom2.Element("description");
-                descriptionL.setText(a.getContent() + "\n<br>" + a.getMagnet() + "<p><img src=\"" + a.getImgLink() + "\" /></p>");
+                descriptionL.setText(a.getSummary() + "\n<br>" + a.getMagnet() + "<p><img src=\"" + a.getImgLink() + "\" /></p>");
                 item.addContent(descriptionL);
                 org.jdom2.Element author = new org.jdom2.Element("author");
-                author.setText("琉璃神社");
+                author.setText(a.getAuthor());
                 item.addContent(author);
                 org.jdom2.Element pubDate = new org.jdom2.Element("pubDate");
-                pubDate.setText(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                pubDate.setText(a.getPublishTime().split("T")[0] + " " + a.getPublishTime().split("T")[1].split("\\+")[0]);
                 item.addContent(pubDate);
             }
             org.jdom2.Element lastBuildDate = channel.getChild("lastBuildDate");
@@ -133,8 +137,8 @@ public class Main extends Print {
     }
 
     private static String GetMagnet(DataFinder finder, Document doc) {
-        List<Element> list = finder.GetElementByClass(doc, "entry-content");
-        String magent = "";
+        List<Element> list = finder.GetElementsByClass(doc, "entry-content");
+        StringBuilder magent = new StringBuilder();
         for (Element e :
                 list) {
             String content = e.toString();
@@ -142,12 +146,12 @@ public class Main extends Print {
             Matcher matcher = pattern.matcher(content);
             while (matcher.find()) {
                 for (int i = 0; i <= matcher.groupCount(); i++) {
-                    magent = magent + matcher.group(i);
-                    magent = magent + "<br>";
+                    magent.append(matcher.group(i));
+                    magent.append("<br>");
                 }
             }
         }
-        return magent;
+        return magent.toString();
     }
 
     private static boolean CheckTitle(org.jdom2.Element channel, String text) {
