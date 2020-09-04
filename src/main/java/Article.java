@@ -1,67 +1,40 @@
 public class Article {
-    private String title;
-    private String publishTime;
-    private String author;
-    private String summary;
-    private String imgLink;
-    private String link;
-    private String magnet;
+    private final String title;
+    private final String publishTime;
+    private final String author;
+    private final String summary;
+    private final String imgLink;
+    private final String link;
+    private final String magnet;
 
     public String getPublishTime() {
         return publishTime;
-    }
-
-    public void setPublishTime(String publishTime) {
-        this.publishTime = publishTime;
     }
 
     public String getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public String getTitle() {
         return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
     }
 
     public String getSummary() {
         return summary;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
-    }
-
     public String getImgLink() {
         return imgLink;
-    }
-
-    public void setImgLink(String imgLink) {
-        this.imgLink = imgLink;
     }
 
     public String getLink() {
         return link;
     }
 
-    public void setLink(String link) {
-        this.link = link;
-    }
-
     public String getMagnet() {
         return magnet;
     }
 
-    public void setMagnet(String magnet) {
-        this.magnet = magnet;
-    }
 
     /***
      *
@@ -94,7 +67,5 @@ public class Article {
                 ", link='" + link + '\'' +
                 ", magnet='" + magnet + '\'' +
                 '}';
-    }
-    public Article() {
     }
 }
