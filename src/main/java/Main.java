@@ -87,7 +87,7 @@ public class Main extends Printer {
                                 "文章：" + articleList.toString() + "<br>");
             }
 
-            WaitForSecond(60 * 60 * 8);
+            WaitForSecond(60 * 60 * 4);
 
         }
 
