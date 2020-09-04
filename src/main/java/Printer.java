@@ -1,5 +1,5 @@
 
-public class Print {
+public class Printer {
     private static final int PROGRESS_BAR_LENGTH = 16;
     private static final String HEAD = "Waiting:"; // 或许可以删掉
     private static int maxLength = 0;
