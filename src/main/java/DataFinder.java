@@ -9,12 +9,12 @@ import org.apache.http.util.EntityUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class DataFinder extends Print {
+public class DataFinder extends Printer {
 
     public String Requester(String url) throws Exception {
         String data = null;
@@ -33,9 +33,9 @@ public class DataFinder extends Print {
                 SendErrMail("Rss服务器错误", "<h1>错误信息</h1><br><div>" +
                         "错误发生时间：" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) +
                         "错误类型：连接失败<br>" +
-                        "请求网址："+url+"<br>" +
-                        "请求错误代码："+state+"<br>" +
-                        "详细请求头："+res.getAllHeaders().toString() +
+                        "请求网址：" + url + "<br>" +
+                        "请求错误代码：" + state + "<br>" +
+                        "详细请求头：" + Arrays.toString(res.getAllHeaders()) +
                         "</div>", res, httpClient);
                 System.err.println("连接失败，错误码："+state);
                 return null;
