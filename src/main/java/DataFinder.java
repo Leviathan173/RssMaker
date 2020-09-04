@@ -74,11 +74,11 @@ public class DataFinder extends Print {
 
     }
 
-    public List<Element> GetElementByClass(Document doc, String className) {
+    public List<Element> GetElementsByClass(Document doc, String className) {
         List<Element> list = doc.getElementsByClass(className);
-        if(list != null){
+        if (list != null) {
             return list;
-        }else {
+        } else {
             PrintErr("List of Title is null!!!");
             return null;
         }
