@@ -9,7 +9,7 @@ import java.util.Properties;
 *
 * */
 public class MailSender{
-    public Boolean SendMail(String subject, String content) throws Exception {
+    public void SendMail(String subject, String content) throws Exception {
         String myEmailAccount = "xxxxxxxxxxx@163.com"; // 更改发件人邮箱
         String myEmailPassword = "asdfg"; // 你需要自己更改密码，注意不是邮箱登录密码，是SMTP服务的授权密码
         String myEmailSMTPHost = "smtp.163.com"; // 这里是163的smtp服务器，如果使用其他邮箱需要更改
@@ -60,7 +60,6 @@ public class MailSender{
 
         // 7. 关闭连接
         transport.close();
-        return true;
     }
 
     public static MimeMessage createMimeMessage(Session session, String sendMail, String receiveMail, String subject, String content) throws Exception {
