@@ -139,6 +139,7 @@ public class Main extends Printer {
     private static String GetMagnet(DataFinder finder, Document doc) {
         List<Element> list = finder.GetElementsByClass(doc, "entry-content");
         StringBuilder magent = new StringBuilder();
+        Base32ToHex base32ToHex = new Base32ToHex();
         for (Element e :
                 list) {
             String content = e.toString();
@@ -150,6 +151,17 @@ public class Main extends Printer {
                     magent.append("<br>");
                 }
             }
+            pattern = Pattern.compile("(?<![a-zA-Z0-9])[a-zA-Z0-9]{32}(?![a-zA-Z0-9])");
+            matcher = pattern.matcher(content);
+            while (matcher.find()) {
+                for (int i = 0; i <= matcher.groupCount(); i++) {
+                    magent.append("这是一个Base32哈希:");
+                    magent.append(matcher.group(i));
+                    magent.append("(" + base32ToHex.DecodeBase32(matcher.group(i)) + ")");
+                    magent.append("<br>");
+                }
+            }
+
         }
         return magent.toString();
     }
