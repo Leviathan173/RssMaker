@@ -1,7 +1,5 @@
 import org.apache.commons.codec.binary.Base32;
 
-import java.io.UnsupportedEncodingException;
-
 public class Base32ToHex {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
 
