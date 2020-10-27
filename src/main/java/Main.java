@@ -141,7 +141,7 @@ public class Main extends Printer {
         StringBuilder magent = new StringBuilder();
         for (Element e :
                 list) {
-            String content = e.toString();
+            String content = e.text();
             Pattern pattern = Pattern.compile("[a-zA-Z0-9]{40,}");
             Matcher matcher = pattern.matcher(content);
             while (matcher.find()) {
@@ -150,7 +150,7 @@ public class Main extends Printer {
                     magent.append("<br>");
                 }
             }
-            pattern = Pattern.compile("(?<![a-zA-Z0-9])[a-zA-Z0-9]{32}(?![a-zA-Z0-9])");
+            pattern = Pattern.compile("(?<!\\S)[a-zA-Z0-9]{32}(?!\\S)");
             matcher = pattern.matcher(content);
             while (matcher.find()) {
                 for (int i = 0; i <= matcher.groupCount(); i++) {
