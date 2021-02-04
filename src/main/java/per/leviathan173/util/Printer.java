@@ -1,28 +1,37 @@
+package per.leviathan173.util;
 
 public class Printer {
     private static final int PROGRESS_BAR_LENGTH = 16;
-    private static final String HEAD = "Waiting:"; // 或许可以删掉
+    private static final String HEAD = "Waiting:";
     private static int maxLength = 0;
+    /**
+     * 0=不输出
+     * 1=输出基础信息
+     * 2=输出debug信息
+     * 错误输出不受影响
+     */
+    public static int DEBUG_LEVEL = 0;
 
-    public static void Println(Object T) {
-        System.out.println(T);
+    public static void printLn(Object T) {
+        if (DEBUG_LEVEL > 0)
+            System.out.println(T);
     }
 
-    public static void PrintErr(Object T) {
+    public static void log(Object T){
+        if (DEBUG_LEVEL > 1)
+            System.out.println(T);
+    }
+
+    public static void printErr(Object T) {
         System.err.println(T);
     }
 
-    public static void Print(Object T) {
-        System.out.print(T);
-    }
-
-    // 或许这个方法在Print类里面不是很适合
-    public static void WaitForSecond(int sec) {
+    public static void waitForSecond(int sec) {
         float percentage;
         for (float i = 1; i <= sec; i++) {
             percentage = (i / sec) * 100;
             // 转为之前的10,000倍再取整再除以10,000，保留了原数的四位小数
-            RePrint((float) (Math.round(percentage * 10000)) / 10000);
+            rePrint((float) (Math.round(percentage * 10000)) / 10000);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -31,20 +40,19 @@ public class Printer {
         }
         // 因为Main类是直接继承Print类，maxLength不会重置，等待结束后需要手动重置
         maxLength = 0;
-        Print("\n");
+        System.out.print("\n");
 
     }
 
-    private static void GotoStart() {
+    private static void gotoStart() {
         for (int i = maxLength; i > 0; i--) {
-            Print('\b');
+            System.out.print('\b');
         }
     }
 
-
-    static void RePrint(float percentage) {
+    static void rePrint(float percentage) {
         StringBuilder s = new StringBuilder(HEAD + percentage + "%[");
-        GotoStart();
+        gotoStart();
         for (int index = 0; index < PROGRESS_BAR_LENGTH; index++) {
             int c = (index * 100) / PROGRESS_BAR_LENGTH;
             if (c == 0) continue;
@@ -61,6 +69,7 @@ public class Printer {
                 s.append(" ");
             }
         }
-        Print(s.toString());
+        System.out.print(s.toString());
     }
+
 }

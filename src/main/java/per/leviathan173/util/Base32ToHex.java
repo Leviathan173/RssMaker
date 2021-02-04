@@ -1,16 +1,9 @@
+package per.leviathan173.util;
+
 import org.apache.commons.codec.binary.Base32;
 
 public class Base32ToHex {
     private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
-
-    //    public static void main(String[] args) throws UnsupportedEncodingException {
-//        String origin = "EM756NVFWW3VG2TG2D4S3WEWQWGKJWYR";
-//        String expect = "233FDF36A5B5B7536A66D0F92DD896858CA4DB11";
-//        Base32 base32 = new Base32();
-//        String output = bytesToHex(base32.decode(origin));
-//        Printer.Println(output);
-//        Printer.Println("success?"+(expect.equals(output)));
-//    }
     public static String DecodeBase32(String target) {
         return bytesToHex(new Base32().decode(target));
     }

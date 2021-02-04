@@ -1,3 +1,5 @@
+package per.leviathan173.entity;
+
 public class Article {
     private final String title;
     private final String publishTime;
@@ -58,7 +60,7 @@ public class Article {
 
     @Override
     public String toString() {
-        return "Article{" +
+        return "per.leviathan173.entity.Article{" +
                 "title='" + title + '\'' +
                 ", publishTime='" + publishTime + '\'' +
                 ", author='" + author + '\'' +
