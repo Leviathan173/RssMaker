@@ -38,7 +38,6 @@ public class Printer {
                 e.printStackTrace();
             }
         }
-        // 因为Main类是直接继承Print类，maxLength不会重置，等待结束后需要手动重置
         maxLength = 0;
         System.out.print("\n");
 
