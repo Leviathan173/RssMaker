@@ -45,7 +45,7 @@ public class Strings extends Printer{
                                    DataFinder finder) throws Exception {
         for (Element e :
                 articles) {
-            String title, publishTime, author, content, imgLink, articleLink, magnet = "";
+            String title, publishTime, author, content, imgLink = "", articleLink, magnet = "";
             title = e.getElementsByClass("entry-title").text();
             log("title=" + title);
             if (title.equals("")) {
@@ -60,7 +60,8 @@ public class Strings extends Printer{
             publishTime = e.getElementsByClass("entry-date").get(0).attributes().get("datetime");
             author = e.getElementsByClass("author vcard").get(0).text();
             content = e.getElementsByClass("entry-content").text();
-            imgLink = e.getElementsByTag("img").get(0).attr("src");
+            if (e.getElementsByTag("img").size() > 0)
+                imgLink = e.getElementsByTag("img").get(0).attr("src");
             articleLink = e.getElementsByClass("more-link").attr("href");
             log("publishTime=" + publishTime + " \nauthor=" + author + "\n" +
                     "content=" + content + "\nimgLink=" + imgLink + "\n" +
