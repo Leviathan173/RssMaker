@@ -88,7 +88,7 @@ public class DataFinder extends Printer {
         if(list != null){
             return list;
         }else {
-            printErr("List of per.leviathan173.entity.Article is null!!!");
+            printErr("List of " + article + " is null!!!");
             return null;
         }
     }
