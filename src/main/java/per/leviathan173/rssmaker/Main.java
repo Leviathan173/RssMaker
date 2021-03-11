@@ -15,12 +15,12 @@ import java.util.List;
 
 public class Main extends Printer {
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Throwable {
         Options options = new Options();
         CmdLineParser parser = new CmdLineParser(options);
         try {
             parser.parseArgument(args);
-        }catch (CmdLineException e){
+        } catch (CmdLineException e) {
             parser.printUsage(System.out);
             System.exit(0);
         }
@@ -30,7 +30,7 @@ public class Main extends Printer {
         new Main().doMain();
     }
 
-    public void doMain() throws Exception {
+    public void doMain() throws Throwable {
         org.jdom2.Document document = null;
         org.jdom2.Element root;
         org.jdom2.Element channel = null;
@@ -48,12 +48,13 @@ public class Main extends Printer {
             printErr("初始化XML文件失败！");
         }
         while (true) {
-            List<Article> articleList = new ArrayList<Article>();
+            List<Article> articleList = new ArrayList<>();
             DataFinder finder = new DataFinder();
-            Document doc = finder.getDocumentFromUrl("https://hacg.me/wp/");
+            GetTrueURL getter = new GetTrueURL();
+            Document doc = finder.getDocumentFromUrl(getter.getURL());
             if (doc == null) {
                 printLn("doc is null");
-                MailSender.sendErrMail("空指针","");
+                MailSender.sendErrMail("空指针", "");
                 waitForSecond(60 * 60);
                 continue;
             }
