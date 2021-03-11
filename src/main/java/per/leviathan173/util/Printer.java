@@ -17,7 +17,12 @@ public class Printer {
             System.out.println(T);
     }
 
-    public static void log(Object T){
+    public static void print(Object T) {
+        if (DEBUG_LEVEL > 0)
+            System.out.print(T);
+    }
+
+    public static void log(Object T) {
         if (DEBUG_LEVEL > 1)
             System.out.println(T);
     }
