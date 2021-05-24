@@ -5,6 +5,7 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import per.leviathan173.entity.Article;
+import per.leviathan173.entity.Options;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,8 +17,8 @@ import java.util.List;
 public class Xml {
     public static boolean writeXML(List<Article> articleList, org.jdom2.Element channel, org.jdom2.Document document) {
         try {
-            for (Article a :
-                    articleList) {
+            for (int i = articleList.size() - 1; i >= 0; i--) {
+                Article a = articleList.get(i);
                 if (checkTitle(channel, a.getTitle())) {
                     continue;
                 }
@@ -38,6 +39,10 @@ public class Xml {
                 org.jdom2.Element pubDate = new org.jdom2.Element("pubDate");
                 pubDate.setText(a.getPublishTime().split("T")[0] + " " + a.getPublishTime().split("T")[1].split("\\+")[0]);
                 item.addContent(pubDate);
+                while (channel.getChildren("item").size() > Options.MAX_NUMBER_OF_ARTICLES) {
+                    Printer.log("detached " + channel.getChildren("item").get(0).getChildText("title"));
+                    channel.getChildren("item").get(0).detach();
+                }
             }
             org.jdom2.Element lastBuildDate = channel.getChild("lastBuildDate");
             assert lastBuildDate != null;
@@ -87,7 +92,7 @@ public class Xml {
         format.setIndent("");
         format.setEncoding("UTF-8");
         XMLOutputter outputter = new XMLOutputter(format);
-        outputter.output(document, new FileOutputStream(new File("rss.xml")));
+        outputter.output(document, new FileOutputStream("rss.xml"));
     }
 
     public static boolean checkTitle(org.jdom2.Element channel, String text) {

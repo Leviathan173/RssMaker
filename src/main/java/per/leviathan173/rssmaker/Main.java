@@ -16,8 +16,7 @@ import java.util.List;
 public class Main extends Printer {
 
     public static void main(String[] args) throws Throwable {
-        Options options = new Options();
-        CmdLineParser parser = new CmdLineParser(options);
+        CmdLineParser parser = new CmdLineParser(new Options());
         try {
             parser.parseArgument(args);
         } catch (CmdLineException e) {
@@ -25,8 +24,6 @@ public class Main extends Printer {
             System.exit(0);
         }
 
-        Printer.DEBUG_LEVEL = options.DEBUG_LEVEL;
-        MailSender.ENABLE_MAIL = options.ENABLE_MAIL;
         new Main().doMain();
     }
 
@@ -66,7 +63,7 @@ public class Main extends Printer {
             // Xml写入
             if (!Xml.writeXML(articleList, channel, document)) {
                 MailSender.sendErrMail("写入XML文件失败",
-                        "文章：" + articleList.toString() + "<br>");
+                        "文章：" + articleList + "<br>");
                 printLn("写入XML文件失败");
                 waitForSecond(60 * 60);
                 continue;
