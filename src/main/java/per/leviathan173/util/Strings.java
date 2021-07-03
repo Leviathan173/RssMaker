@@ -3,6 +3,7 @@ package per.leviathan173.util;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import per.leviathan173.entity.Article;
 
 import java.util.List;
@@ -45,8 +46,8 @@ public class Strings extends Printer{
                                    DataFinder finder) throws Exception {
         for (Element e :
                 articles) {
-            String title, publishTime, author, content, imgLink = "", articleLink, magnet = "";
-            title = e.getElementsByClass("entry-title").text();
+            String title, publishTime, author, summary, imgLink, articleLink, magnet = "";
+            title = getArticleTitle(e);
             log("title=" + title);
             if (title.equals("")) {
                 printLn("广告文章，跳过...");
@@ -57,14 +58,13 @@ public class Strings extends Printer{
                 printLn("文章：" + title + " 已存在，跳过...");
                 continue;
             }
-            publishTime = e.getElementsByClass("entry-date").get(0).attributes().get("datetime");
-            author = e.getElementsByClass("author vcard").get(0).text();
-            content = e.getElementsByClass("entry-content").text();
-            if (e.getElementsByTag("img").size() > 0)
-                imgLink = e.getElementsByTag("img").get(0).attr("src");
-            articleLink = e.getElementsByClass("more-link").attr("href");
+            publishTime = getArticlePublishTime(e);
+            author = getArticleAuthor(e);
+            summary = getArticleSummary(e);
+            imgLink = getArticleImgLink(e);
+            articleLink = getArticleArticleLink(e);
             log("publishTime=" + publishTime + " \nauthor=" + author + "\n" +
-                    "content=" + content + "\nimgLink=" + imgLink + "\n" +
+                    "summary=" + summary + "\nimgLink=" + imgLink + "\n" +
                     "articleLink=" + articleLink);
             if (!articleLink.equals("")) {
                 magnet = Strings.getMagnet(finder, Jsoup.parse(finder.requester(articleLink)));
@@ -72,8 +72,56 @@ public class Strings extends Printer{
             } else {
                 printLn("has no magnet in " + articleLink);
             }
-            articleList.add(new Article(title, publishTime, author, content, imgLink, articleLink, magnet));
+            articleList.add(new Article(title, publishTime, author, summary, imgLink, articleLink, magnet));
             log(articleList.toString());
         }
+    }
+
+    public static String getArticleTitle(Element e) {
+        Elements entryTitle = e.getElementsByClass("entry-title");
+        if (entryTitle.isEmpty()) {
+            return "【没有标题】";
+        }
+        return entryTitle.text();
+    }
+
+    public static String getArticlePublishTime(Element e) {
+        Elements publishTime = e.getElementsByClass("entry-date");
+        if (publishTime.isEmpty()) {
+            return "2021-07-04T02:00:00+08:00";
+        }
+        return publishTime.get(0).attributes().get("datetime");
+    }
+
+    public static String getArticleAuthor(Element e) {
+        Elements author = e.getElementsByClass("author vcard");
+        if (author.isEmpty()) {
+            return "【佚名】";
+        }
+        return author.get(0).text();
+    }
+
+    public static String getArticleSummary(Element e) {
+        Elements summary = e.getElementsByClass("entry-content");
+        if (summary.isEmpty()) {
+            return "【没有描述】";
+        }
+        return summary.text();
+    }
+
+    public static String getArticleImgLink(Element e) {
+        Elements imgLink = e.getElementsByTag("img");
+        if (imgLink.isEmpty()) {
+            return "";
+        }
+        return imgLink.get(0).attr("src");
+    }
+
+    public static String getArticleArticleLink(Element e) {
+        Elements articleLink = e.getElementsByClass("more-link");
+        if (articleLink.isEmpty()) {
+            return "";
+        }
+        return articleLink.attr("href");
     }
 }
