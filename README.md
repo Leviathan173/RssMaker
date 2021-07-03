@@ -2,12 +2,14 @@
 琉璃神社的Rss生成器  
 
 ## Example  
-`java -jar RssMaker-version.jar --enable-email -d 1`  
+`java -jar RssMaker-version.jar --enable-email -d 1 -m 15`  
 
 ## 可用的选项  
 ```  
---enable-email : Enable email function (default: false)  
- -d N           : Set debug level, 0=none 1=normal 2=all massage (default: 1)  
+--enable-email : Enable email function (default: false)
+ -d N           : Set debug level, 0=none 1=normal 2=all massage (default: 1)
+ -m N           : Set maximum number of articles which rss file content
+                  (default: 10)
 ```  
 
 ## 注意

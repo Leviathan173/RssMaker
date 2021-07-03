@@ -1,5 +1,7 @@
 package per.leviathan173.util;
 
+import static per.leviathan173.entity.Options.DEBUG_LEVEL;
+
 public class Printer {
     private static final int PROGRESS_BAR_LENGTH = 16;
     private static final String HEAD = "Waiting:";
@@ -10,16 +12,11 @@ public class Printer {
      * 2=输出debug信息
      * 错误输出不受影响
      */
-    public static int DEBUG_LEVEL = 0;
+    // public static int DEBUG_LEVEL = 0;
 
     public static void printLn(Object T) {
         if (DEBUG_LEVEL > 0)
             System.out.println(T);
-    }
-
-    public static void print(Object T) {
-        if (DEBUG_LEVEL > 0)
-            System.out.print(T);
     }
 
     public static void log(Object T) {
@@ -73,7 +70,7 @@ public class Printer {
                 s.append(" ");
             }
         }
-        System.out.print(s.toString());
+        System.out.print(s);
     }
 
 }

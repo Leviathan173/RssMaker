@@ -8,12 +8,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import static per.leviathan173.entity.Options.ENABLE_MAIL;
+
 /*
 * 这个类使用了https://blog.csdn.net/xuemengrui12/article/details/78530594的代码
 *
 * */
 public class MailSender{
-    public static boolean ENABLE_MAIL=false;
     public void sendMail(String subject, String content) throws Exception {
         if (!ENABLE_MAIL)return;
         String myEmailAccount = "xxxxxxxxxxx@163.com"; // 更改发件人邮箱
